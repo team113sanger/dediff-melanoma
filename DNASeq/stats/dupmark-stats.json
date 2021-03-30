@@ -1,0 +1,200 @@
+{
+	"PD42795a-dupmarked.stats.gz": {
+		"library": 194786,
+		"unpaired_reads_examined": 70695,
+		"read_pairs_examined": 63029628,
+		"unmapped_reads": 97293,
+		"unpaired_read_duplicates": 39504,
+		"read_pair_duplicates": 20192906,
+		"read_pair_optical_duplicates": 375546,
+		"percent_duplication": 0.320505,
+		"estimated_library_size": 76820082
+	},
+	"PD42795b-dupmarked.stats.gz": {
+		"library": 194787,
+		"unpaired_reads_examined": 66935,
+		"read_pairs_examined": 55041429,
+		"unmapped_reads": 86149,
+		"unpaired_read_duplicates": 36301,
+		"read_pair_duplicates": 15815992,
+		"read_pair_optical_duplicates": 297413,
+		"percent_duplication": 0.287502,
+		"estimated_library_size": 77286927
+	},
+	"PD42795c-dupmarked.stats.gz": {
+		"library": 194788,
+		"unpaired_reads_examined": 88718,
+		"read_pairs_examined": 46718642,
+		"unmapped_reads": 105998,
+		"unpaired_read_duplicates": 38801,
+		"read_pair_duplicates": 13296787,
+		"read_pair_optical_duplicates": 226829,
+		"percent_duplication": 0.284759,
+		"estimated_library_size": 66331109
+	},
+	"PD42796a-dupmarked.stats.gz": {
+		"library": 194789,
+		"unpaired_reads_examined": 139675,
+		"read_pairs_examined": 62214017,
+		"unmapped_reads": 157921,
+		"unpaired_read_duplicates": 80505,
+		"read_pair_duplicates": 19771562,
+		"read_pair_optical_duplicates": 397211,
+		"percent_duplication": 0.318089,
+		"estimated_library_size": 76706932
+	},
+	"PD42796b-dupmarked.stats.gz": {
+		"library": 194790,
+		"unpaired_reads_examined": 97192,
+		"read_pairs_examined": 67308157,
+		"unmapped_reads": 114068,
+		"unpaired_read_duplicates": 58486,
+		"read_pair_duplicates": 20915842,
+		"read_pair_optical_duplicates": 386282,
+		"percent_duplication": 0.310957,
+		"estimated_library_size": 85391352
+	},
+	"PD42796c-dupmarked.stats.gz": {
+		"library": 194791,
+		"unpaired_reads_examined": 149866,
+		"read_pairs_examined": 62470299,
+		"unmapped_reads": 169520,
+		"unpaired_read_duplicates": 85833,
+		"read_pair_duplicates": 20932841,
+		"read_pair_optical_duplicates": 431901,
+		"percent_duplication": 0.335369,
+		"estimated_library_size": 71790011
+	},
+	"PD42797a-dupmarked.stats.gz": {
+		"library": 194792,
+		"unpaired_reads_examined": 84511,
+		"read_pairs_examined": 63381145,
+		"unmapped_reads": 168043,
+		"unpaired_read_duplicates": 44571,
+		"read_pair_duplicates": 17425292,
+		"read_pair_optical_duplicates": 324839,
+		"percent_duplication": 0.275097,
+		"estimated_library_size": 94119720
+	},
+	"PD42797b-dupmarked.stats.gz": {
+		"library": 194793,
+		"unpaired_reads_examined": 78219,
+		"read_pairs_examined": 63657266,
+		"unmapped_reads": 125283,
+		"unpaired_read_duplicates": 42343,
+		"read_pair_duplicates": 18248504,
+		"read_pair_optical_duplicates": 357105,
+		"percent_duplication": 0.286824,
+		"estimated_library_size": 89699013
+	},
+	"PD42797c-dupmarked.stats.gz": {
+		"library": 194794,
+		"unpaired_reads_examined": 126846,
+		"read_pairs_examined": 53291255,
+		"unmapped_reads": 176958,
+		"unpaired_read_duplicates": 53920,
+		"read_pair_duplicates": 17005607,
+		"read_pair_optical_duplicates": 310586,
+		"percent_duplication": 0.319233,
+		"estimated_library_size": 65279039
+	},
+	"PD42798a-dupmarked.stats.gz": {
+		"library": 194795,
+		"unpaired_reads_examined": 80176,
+		"read_pairs_examined": 80238227,
+		"unmapped_reads": 93074,
+		"unpaired_read_duplicates": 50178,
+		"read_pair_duplicates": 24434565,
+		"read_pair_optical_duplicates": 447109,
+		"percent_duplication": 0.304686,
+		"estimated_library_size": 104508711
+	},
+	"PD42798b-dupmarked.stats.gz": {
+		"library": 194796,
+		"unpaired_reads_examined": 82258,
+		"read_pairs_examined": 64972152,
+		"unmapped_reads": 96168,
+		"unpaired_read_duplicates": 48820,
+		"read_pair_duplicates": 21022493,
+		"read_pair_optical_duplicates": 425718,
+		"percent_duplication": 0.323732,
+		"estimated_library_size": 78229268
+	},
+	"PD42798c-dupmarked.stats.gz": {
+		"library": 194797,
+		"unpaired_reads_examined": 93676,
+		"read_pairs_examined": 40232377,
+		"unmapped_reads": 99444,
+		"unpaired_read_duplicates": 46686,
+		"read_pair_duplicates": 10640795,
+		"read_pair_optical_duplicates": 196427,
+		"percent_duplication": 0.264755,
+		"estimated_library_size": 62710316
+	},
+	"PD42799a-dupmarked.stats.gz": {
+		"library": 194798,
+		"unpaired_reads_examined": 72827,
+		"read_pairs_examined": 51963329,
+		"unmapped_reads": 194077,
+		"unpaired_read_duplicates": 33372,
+		"read_pair_duplicates": 16777022,
+		"read_pair_optical_duplicates": 209784,
+		"percent_duplication": 0.322958,
+		"estimated_library_size": 62462263
+	},
+	"PD42799b-dupmarked.stats.gz": {
+		"library": 194799,
+		"unpaired_reads_examined": 66438,
+		"read_pairs_examined": 73643513,
+		"unmapped_reads": 260902,
+		"unpaired_read_duplicates": 38227,
+		"read_pair_duplicates": 24094134,
+		"read_pair_optical_duplicates": 363267,
+		"percent_duplication": 0.327284,
+		"estimated_library_size": 87105891
+	},
+	"PD42800a-dupmarked.stats.gz": {
+		"library": 194800,
+		"unpaired_reads_examined": 107375,
+		"read_pairs_examined": 65374430,
+		"unmapped_reads": 127853,
+		"unpaired_read_duplicates": 58046,
+		"read_pair_duplicates": 21036176,
+		"read_pair_optical_duplicates": 398601,
+		"percent_duplication": 0.321959,
+		"estimated_library_size": 79232369
+	},
+	"PD42800b-dupmarked.stats.gz": {
+		"library": 194801,
+		"unpaired_reads_examined": 54715,
+		"read_pairs_examined": 59045680,
+		"unmapped_reads": 65193,
+		"unpaired_read_duplicates": 30832,
+		"read_pair_duplicates": 17463810,
+		"read_pair_optical_duplicates": 324300,
+		"percent_duplication": 0.295892,
+		"estimated_library_size": 79881027
+	},
+	"PD42800c-dupmarked.stats.gz": {
+		"library": 194802,
+		"unpaired_reads_examined": 87226,
+		"read_pairs_examined": 59390773,
+		"unmapped_reads": 114996,
+		"unpaired_read_duplicates": 46315,
+		"read_pair_duplicates": 17925858,
+		"read_pair_optical_duplicates": 300671,
+		"percent_duplication": 0.301997,
+		"estimated_library_size": 78181035
+	},
+	"PD42800d-dupmarked.stats.gz": {
+		"library": 194803,
+		"unpaired_reads_examined": 143084,
+		"read_pairs_examined": 54523005,
+		"unmapped_reads": 194476,
+		"unpaired_read_duplicates": 69790,
+		"read_pair_duplicates": 15873557,
+		"read_pair_optical_duplicates": 242024,
+		"percent_duplication": 0.291393,
+		"estimated_library_size": 75118089
+	}
+}

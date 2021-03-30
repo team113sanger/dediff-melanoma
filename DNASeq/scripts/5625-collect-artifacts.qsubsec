@@ -1,0 +1,30 @@
+section('{PROJECT_ID}-ARTIFACTS-{SAMPLE}-{STYPE}', description='Collect sequencing artifacts for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE} {STYPE} BAM files')
+options('-R "select[mem>{MUTECT2_TO_MAX_MEM}] rusage[mem={MUTECT2_TO_MAX_MEM}]" -M {MUTECT2_TO_MAX_MEM}')
+options('-R "span[hosts=1]" -n1')
+options('-q "{MUTECT2_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Load the sample JSON file to get the file mappings:
+import json
+inputs = dict()
+with open('{SAMPLE_MAP}', 'r') as map_file:
+    sample_map = json.loads(map_file.read())
+    if '{SAMPLE}' not in sample_map.keys(): raise Exception('sample {SAMPLE} not in sample map')
+    if '{STYPE}' not in sample_map['{SAMPLE}'].keys(): raise Exception('no {STYPE} for sample {SAMPLE}')
+    for s in sample_map['{SAMPLE}']['{STYPE}']:
+        inputs[s] = '{SAMPLE_BAM_FILESTEM}' % (s, s)
+# Display and check the inputs:
+if len(inputs) == 0: raise Exception('at least 1 input BAM required')
+message('Using %d input BAM(s):' % len(inputs))
+for i in inputs.keys(): message('  %s' % inputs[i])
+
+# Check the output directories:
+require('{SAMPLE_DIR}/{SAMPLE}', 'PATH_WRITABLE')
+require('{SAMPLE_DIR}/{SAMPLE}/logs', 'PATH_WRITABLE')
+
+# Submit a single job per inpujt BAM file (as CollectSequencingArtifactMetrics needs 1 BAM file per run):
+for s in inputs.keys():
+    require(inputs[s], 'PATH_READABLE')
+    output_metrics = '{SAMPLE_DIR}/{SAMPLE}/%s-artifacts' % (s)
+    artifact_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-artifacts-%s.log' % (s)
+    command('{GATK_EXEC} CollectSequencingArtifactMetrics -R {CANAPPS_REF_FASTA} --FILE_EXTENSION ".txt" -I %s -O %s &> %s' % (inputs[s], output_metrics, artifact_log), name='run_artifact_%s' % (s))

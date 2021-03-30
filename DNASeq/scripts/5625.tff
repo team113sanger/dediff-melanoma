@@ -1,0 +1,59 @@
+# This is the TFF file for the 5625_dedifferentiated-melanoma project
+# Alastair Droop, 2019-04-23
+
+# Project ID:
+PROJECT_ID = "5625"
+PROJECT_SLUG = "dedifferentiated-melanoma"
+PROJECT = "{PROJECT_ID}_{PROJECT_SLUG}"
+
+# Pipeline memory requirements:
+MUTECT2_TO_MAX_MEM = "32768"
+GATK_MAX_MEM = "24576"
+VEP_MAX_MEM = "4096"
+MUTECT2_TO_MAX_CPU = "4"
+MUTECT2_QUEUE = "long"
+
+# Project directory location:
+BASE_DIR = "/lustre/scratch119/casm/team113da/projects/{PROJECT}"
+LOG_DIR = "{BASE_DIR}/logs"
+METADATA_DIR = "{BASE_DIR}/metadata"
+SCRIPT_DIR = "{BASE_DIR}/scripts"
+STATS_DIR = "{BASE_DIR}/stats"
+SAMPLE_DIR = "{BASE_DIR}/samples"
+MERGED_DIR = "{BASE_DIR}/merged"
+VEP_DIR = "{BASE_DIR}/vep"
+SPLIT_DIR = "{MERGED_DIR}/split"
+DB_DIR = "{BASE_DIR}/db"
+GENOMEDB_DIR = "{DB_DIR}/genomedb"
+
+# Raw data location:
+CANAPPS_ID = "2103"
+CANAPPS_BASE_DIR = "/nfs/cancer_ref01/nst_links/live/{CANAPPS_ID}"
+
+# Reference data:
+REFERENCE_DIR = "{BASE_DIR}/reference"
+CANAPPS_REF_FASTA = "{REFERENCE_DIR}/genome.fa"
+BAITSET_BED = "{REFERENCE_DIR}/baitset/sureselect_5_9-padded-trimmed.bed"
+GERMLINE_VCF = "{REFERENCE_DIR}/gnomad-exomes_2.1.1.vcf.gz"
+DBSNP_VCF = "{REFERENCE_DIR}/dbsnp_138.b37.vcf.gz"
+CLINVAR_VCF = "{REFERENCE_DIR}/clinvar.vcf.gz"
+
+# The Samples to use:
+SAMPLE_MAP = "{METADATA_DIR}/samples.json"
+
+# Sample files:
+SAMPLE_BAM_FILESTEM = "{CANAPPS_BASE_DIR}/%s/%s.sample.dupmarked.bam"
+
+# PON Files:
+USE_PON = "yes" # Values should be "yes" or "no"
+PON_VCF = "{DB_DIR}/{PROJECT_ID}-pon.vcf.gz"
+
+# Executables:
+SAMTOOLS_EXEC = "samtools"
+GATK_EXEC = "/nfs/users/nfs_a/ad33/bin/GATK-4.1.1.0/gatk --java-options \'-Xmx{GATK_MAX_MEM}M\'"
+BCF_EXEC = "bcftools"
+
+# The VEP container details:
+VEP_VERSION = "97"
+VEP_MODULE = "ensembl_vep/{VEP_VERSION}.0"
+VEP_CACHE = "/lustre/scratch119/casm/team113da/references/vep_cache"
