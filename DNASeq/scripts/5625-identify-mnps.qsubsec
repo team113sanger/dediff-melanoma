@@ -1,0 +1,38 @@
+import json
+
+if '{STATE}' not in ['PRE', 'POST']: raise Exception('STATE must be one of ["PRE", "POST"]')
+
+if '{USE_PON}' == 'yes':
+    section_id = '{PROJECT_ID}-MNP-{STATE}-PON'
+    section_desc = 'Count CC>TT DNPs for project {PROJECT_ID} ({PROJECT_SLUG}) samples using a PON'
+    if '{STATE}' == 'PRE': input_vcf = '{SAMPLE_DIR}/%s/%s-normal_vs_%s.vcf.gz' # (SAMPLE, SAMPLE, STYPE)
+    else: input_vcf = '{SAMPLE_DIR}/%s/%s-normal_vs_%s-annotated.vcf.gz' # (SAMPLE, SAMPLE, STYPE)
+    output_file = '{STATS_DIR}/{PROJECT_ID}-{STATE}-MNPs.txt'
+        
+else:
+    section_id = '{PROJECT_ID}-MNP-{STATE}-NOPON'
+    section_desc = 'Count CC>TT DNPs for project {PROJECT_ID} ({PROJECT_SLUG}) samples without using a PON'
+    if '{STATE}' == 'PRE': input_vcf = '{SAMPLE_DIR}/%s/%s-normal_vs_%s-no-pon.vcf.gz' # (SAMPLE, SAMPLE, STYPE)
+    else: input_vcf = '{SAMPLE_DIR}/%s/%s-normal_vs_%s-annotated-no-pon.vcf.gz' # (SAMPLE, SAMPLE, STYPE)
+    output_file = '{STATS_DIR}/{PROJECT_ID}-{STATE}-MNPs-no-pon.txt'
+
+section(section_id, description=section_desc)
+options('-R "select[mem>{MUTECT2_TO_MAX_MEM}] rusage[mem={MUTECT2_TO_MAX_MEM}]" -M {MUTECT2_TO_MAX_MEM}')
+options('-R "span[hosts=1]" -n{MUTECT2_TO_MAX_CPU}')
+options('-q "{MUTECT2_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Write the header to the output file:
+command('echo -e "sample_ttype\\tchr:pos\\tref\\talt" > %s' % output_file, log=False)
+
+# Define the inputs:
+stypes = ['tumour', 'dediff']
+with open('{SAMPLE_MAP}', 'r') as map_file:
+    sample_map = json.loads(map_file.read())
+    for sample in sample_map.keys():
+        for stype in stypes:
+            if stype not in sample_map[sample].keys(): continue
+            for file_id in sample_map[sample][stype]:
+                input_file = input_vcf % (sample, sample, stype)
+                require(input_file, 'PATH_READABLE')
+                command('{BCF_EXEC} query -i\'TYPE="mnp"\' -f \'%s_%s\\t%%CHROM:%%POS\\t%%REF\\t%%ALT\x7b0\x7d\\n\' %s >> %s' % (sample, stype, input_file, output_file), log=False)

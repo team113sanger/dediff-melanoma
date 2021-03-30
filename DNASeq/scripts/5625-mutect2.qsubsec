@@ -1,0 +1,100 @@
+# Load the sample map JSON and determine the normal / and tumour:
+
+if '{USE_PON}' == 'yes':
+    section_id = '{PROJECT_ID}-MUTECT2-{SAMPLE}-{STYPE}-PON'
+    section_desc = 'Run Mutect2 for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE} vs {STYPE} using a PON'
+else:
+    section_id = '{PROJECT_ID}-MUTECT2-{SAMPLE}-{STYPE}-NOPON'
+    section_desc = 'Run Mutect2 for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE} vs {STYPE} without using a PON'
+
+section(section_id, description=section_desc)
+options('-R "select[mem>{MUTECT2_TO_MAX_MEM}] rusage[mem={MUTECT2_TO_MAX_MEM}]" -M {MUTECT2_TO_MAX_MEM}')
+options('-R "span[hosts=1]" -n{MUTECT2_TO_MAX_CPU}')
+options('-q "{MUTECT2_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Load the sample JSON file to get the file mappings:
+import json
+normals = []
+inputs = []
+input_ids = []
+with open('{SAMPLE_MAP}', 'r') as map_file:
+    sample_map = json.loads(map_file.read())
+    if '{SAMPLE}' not in sample_map.keys(): raise Exception('sample {SAMPLE} not in sample map')
+    if 'normal' not in sample_map['{SAMPLE}'].keys(): raise Exception('no normal for sample {SAMPLE}')
+    if '{STYPE}' not in sample_map['{SAMPLE}'].keys(): raise Exception('no {STYPE} for sample {SAMPLE}')
+    for s in sample_map['{SAMPLE}']['normal']:
+        normals.append(s)
+        inputs.append('{SAMPLE_BAM_FILESTEM}' % (s, s))
+    for s in sample_map['{SAMPLE}']['{STYPE}']:
+        input_ids.append(s)
+        inputs.append('{SAMPLE_BAM_FILESTEM}' % (s, s))
+message('Using %d input BAM(s):' % len(inputs))
+for i in inputs: message('  %s' % i)
+message('Using %d normal(s):' % len(normals))
+for i in normals: message('  %s' % i)
+
+# Display and check the inputs:
+if len(inputs) < 2: raise Exception('at least 2 input BAMs required')
+if len(normals) == 0: raise Exception('at least 1 normal required')
+if len(input_ids) != 1: raise Exception('exactly 1 {STYPE} BAM required')
+
+# Check the output directories:
+require('{SAMPLE_DIR}/{SAMPLE}', 'PATH_WRITABLE')
+require('{SAMPLE_DIR}/{SAMPLE}/logs', 'PATH_WRITABLE')
+
+# Define the contamination table file:
+contamination_file = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-{STYPE}-contamination.data'
+message('using contamination table from %s' % contamination_file)
+require(contamination_file, 'PATH_READABLE')
+
+# Define the pre-adapter metrics file:
+pa_metrics_file = '{SAMPLE_DIR}/{SAMPLE}/%s-artifacts.pre_adapter_detail_metrics.txt' % (input_ids[0])
+message('using pre-adapter metrics data from %s' % pa_metrics_file)
+require(pa_metrics_file, 'PATH_READABLE')
+
+# Check the annotation files:
+message('using dbSNP annotation data from {DBSNP_VCF}')
+message('using ClinVar annotation data from {CLINVAR_VCF}')
+require('{DBSNP_VCF}', 'PATH_READABLE')
+require('{CLINVAR_VCF}', 'PATH_READABLE')
+
+# Define the Clinvar annotation string (for ease of seeing what the command is below):
+clinvar_annot_str = '--resource:ClinVar {CLINVAR_VCF} -E ClinVar.AF_ESP -E ClinVar.AF_EXAC -E ClinVar.AF_TGP -E ClinVar.ALLELEID -E ClinVar.CLNDNINCL -E ClinVar.CLNDISDBINCL -E ClinVar.CLNHGVS -E ClinVar.CLNSIGINCL -E ClinVar.CLNVI -E ClinVar.CLNVC -E ClinVar.MC -E ClinVar.ORIGIN -E ClinVar.AF_ESP -E ClinVar.AF_EXAC -E ClinVar.AF_TGP -E ClinVar.ALLELEID -E ClinVar.CLNDNINCL -E ClinVar.CLNDISDBINCL -E ClinVar.CLNHGVS -E ClinVar.CLNSIGINCL -E ClinVar.CLNVI -E ClinVar.CLNVC -E ClinVar.MC -E ClinVar.ORIGIN'
+
+# Set up the output file names, depending on whether we use a PON or not:
+if '{USE_PON}' == 'yes':
+    message('using PON data from {PON_VCF}')
+    require('{PON_VCF}', 'PATH_READABLE')
+    require('{PON_VCF}.tbi', 'PATH_READABLE') # Make sure the PON index is present as well.
+    output_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}.vcf.gz'
+    filtered_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-filtered.vcf.gz'
+    filtered2_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-orientationfiltered.vcf.gz'
+    mutect_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-mutect2-normal_vs_{STYPE}-pon.log'
+    filter_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-filtercalls-normal_vs_{STYPE}-pon.log'
+    filter2_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-filterorientation-normal_vs_{STYPE}-pon.log'
+    pon_args = ' --panel-of-normals {PON_VCF}'
+    annotated_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-annotated.vcf.gz'
+    annotate_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-annotate-normal_vs_{STYPE}-pon.log'
+else:
+    message('not using PON data')
+    output_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-no-pon.vcf.gz'
+    filtered_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-filtered-no-pon.vcf.gz'
+    filtered2_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-orientationfiltered-no-pon.vcf.gz'
+    mutect_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-mutect2-normal_vs_{STYPE}-no-pon.log'
+    filter_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-filtercalls-normal_vs_{STYPE}-no-pon.log'
+    filter2_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-filterorientation-normal_vs_{STYPE}-no-pon.log'
+    pon_args = ''
+    annotated_vcf = '{SAMPLE_DIR}/{SAMPLE}/{SAMPLE}-normal_vs_{STYPE}-annotated-no-pon.vcf.gz'
+    annotate_log = '{SAMPLE_DIR}/{SAMPLE}/logs/GATK-annotate-normal_vs_{STYPE}-no-pon.log'
+message('writing unfiltered VCF data to %s' % output_vcf)
+message('writing filtered VCF data to %s' % filtered_vcf)
+message('writing orientation filtered VCF data to %s' % filtered2_vcf)
+message('writing annotated VCF data to %s' % annotated_vcf)
+
+# Generate the submission commands:
+command('module load ISG/jre/1.8.0_131', name='modload_java', log=True, test=False)
+command('{GATK_EXEC} Mutect2 --native-pair-hmm-threads {MUTECT2_TO_MAX_CPU} -R {CANAPPS_REF_FASTA} -L {BAITSET_BED} --germline-resource {GERMLINE_VCF}%s --disable-read-filter MateOnSameContigOrNoMappedMateReadFilter -I %s -normal %s -O %s &> %s' % (pon_args, ' -I '.join(inputs), ' -normal '.join(normals), output_vcf, mutect_log), name='run_mutect2')
+command('{GATK_EXEC} FilterMutectCalls -R {CANAPPS_REF_FASTA} --contamination-table %s -V %s -O %s &> %s' % (contamination_file, output_vcf, filtered_vcf, filter_log), name='filter_mutect2')
+command('{GATK_EXEC} FilterByOrientationBias -AM G/T -AM C/T -P %s -V %s -O %s &> %s' % (pa_metrics_file, filtered_vcf, filtered2_vcf, filter2_log), name='filterorientation_mutect2')
+command('{GATK_EXEC} VariantAnnotator -R {CANAPPS_REF_FASTA} -I %s -V %s -O %s -A Coverage --dbsnp {DBSNP_VCF} %s &> %s' % (' -I '.join(inputs), filtered2_vcf, annotated_vcf, clinvar_annot_str, annotate_log), name='annotate_variants')
