@@ -1,0 +1,37 @@
+{
+	"PR42795": {
+		"normal": ["PR42795b"],
+		"tumour": ["PR42795a"],
+		"dediff": ["PR42795c"]
+	},
+	"PR42796": {
+		"normal": ["PR42796b"],
+		"tumour": ["PR42796a"],
+		"dediff": ["PR42796c"]
+	},
+	"PR42797": {
+		"normal": ["PR42797b"],
+		"tumour": ["PR42797a"],
+		"dediff": ["PR42797c"]
+	},
+	"PR42798": {
+		"normal": ["PR42798b"],
+		"tumour": ["PR42798a"],
+		"dediff": []
+	},
+	"PR42799": {
+		"normal": ["PR42799b"],
+		"tumour": [],
+		"dediff": ["PR42799a"]
+	},
+	"PR42800": {
+		"normal": ["PR42800b", "PR42800c"],
+		"tumour": ["PR42800a"],
+		"dediff": ["PR42800d"]
+	},
+	"PR45781": {
+		"normal": ["PR45781b", "PR45781d"],
+		"tumour": ["PR45781c"],
+		"dediff": ["PR45781a"]
+	}
+}

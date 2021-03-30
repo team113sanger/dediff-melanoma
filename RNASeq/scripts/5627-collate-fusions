@@ -1,0 +1,58 @@
+#!/usr/bin/env Rscript
+
+# Process the commandline:
+args <- commandArgs(trailingOnly=TRUE)
+# args <- c('../fusions', '../metadata/5627-sample-map.json', '../fusions/5627-fusions.csv')
+if(length(args) != 3){
+    warning('usage: 5627-collate-fusions <fusion_dir> <sample_json> <output_file>')
+    quit(save='no', status=1)
+}
+
+params <- list(
+    'fusion.dir' = args[1],
+    'sample.json' = args[2],
+    'output.file' = args[3],
+    'fusion.file' = 'star-fusion.fusion_predictions.abridged.tsv',
+    'file.headers' = c('name', 'junction.readcount', 'span.count', 'splice.type', 'gene.left', 'breakpoint.left', 'gene.right', 'breakpoint.right', 'LHS', 'FFPM', 'break.dinuc.left', 'break.entropy.left', 'break.dinuc.right', 'break.entropy.right', 'annotations')
+)
+
+# Load the necessary libraries:
+library(jsonlite)
+
+# Load the sample data:
+message(sprintf('reading sample metadata from "%s"...', params$sample.json))
+samples <- jsonlite::read_json(params$sample.json)
+samples <- do.call(rbind.data.frame, sapply(names(samples), function(patient){
+    res <- do.call(rbind.data.frame, sapply(names(samples[[patient]]), function(stype){
+        sample.ids <- unique(unlist(samples[[patient]][[stype]]))
+        if(length(sample.ids) == 0) return(NULL)
+        return(data.frame(
+            'patient' = rep(patient, length(sample.ids)),
+            'type' = rep(stype, length(sample.ids)),
+            'sample' = sample.ids,
+            row.names = sample.ids,
+            stringsAsFactors = TRUE
+        ))
+    }, simplify=FALSE))
+}, simplify=FALSE))
+rownames(samples) <- samples$sample
+samples$fusion.file <- file.path(params$fusion.dir, samples$sample, params$fusion.file)
+samples[!file.exists(samples$fusion.file), 'fusion.file'] <- NA
+
+# Load all of the data into a single object:
+message('collating data...')
+res <- do.call(rbind.data.frame, sapply(1:nrow(samples), function(i){
+    d <- read.table(samples[i, 'fusion.file'], sep='\t', col.names=params$file.headers)
+    if(nrow(d) == 0) return(NULL)
+    d <- cbind.data.frame(
+        'patient' = samples[i, 'patient'],
+        'sample' = samples[i, 'sample'],
+        'type' = samples[i, 'type'],
+        d
+    )
+    return(d)
+}))
+
+# Save the output to file:
+message(sprintf('writing collated data to "%s"...', params$output.file))
+write.csv(res, file=params$output.file, quote=FALSE, row.names=FALSE)

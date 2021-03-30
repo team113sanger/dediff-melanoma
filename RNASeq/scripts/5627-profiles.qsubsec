@@ -1,0 +1,15 @@
+section('{PROJECT}-profiles', description='Generate gene profiles for project {PROJECT_ID} ({PROJECT_SLUG})')
+options('-R "select[mem>{MAX_MEM}] rusage[mem={MAX_MEM}]" -M {MAX_MEM}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Test the inputs:
+require('{PROFILE_R}', 'PATH_READABLE')
+require('{COUNTS_DIR}/{PROJECT_ID}-counts.data', 'PATH_READABLE')
+require('{METADATA_DIR}/{PROJECT_ID}-profile-genes.json', 'PATH_READABLE')
+
+# Load the R module:
+command('module load {MODULE_R}', name='modload_r')
+
+# Run the gene profile code:
+command('Rscript {PROFILE_R} {COUNTS_DIR}/{PROJECT_ID}-counts.data {METADATA_DIR}/{PROJECT_ID}-profile-genes.json {METADATA_DIR}/{PROJECT_ID}-sample-map.json {PROFILE_DIR}', name='process_profile')

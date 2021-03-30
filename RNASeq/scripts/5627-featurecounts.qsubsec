@@ -1,0 +1,42 @@
+section('{PROJECT}-featurecounts', description='Generate feature counts data for project {PROJECT_ID} ({PROJECT_SLUG})')
+options('-R "select[mem>{MAX_MEM}] rusage[mem={MAX_MEM}]" -M {MAX_MEM}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Determine the CPU requirements, and what was actually allocated.
+min_cpu = int('{CPU_MIN}')
+max_cpu = int('{CPU_MAX}')
+options('-R "span[hosts=1]" -n%d,%d' % (min_cpu, max_cpu))
+message('requested CPU range [%d,%d])' % (min_cpu, max_cpu))
+command('echo "allocated $LSB_DJOB_NUMPROC processors"', name='report_sf_proc')
+
+# Get a list of all the input BAM files present:
+from os import listdir
+input_bams = []
+for f in listdir('{BAM_DIR}'):
+    if f.endswith('.bam'):
+        input_bam = '{BAM_DIR}/%s' % f
+        require(input_bam, 'PATH_READABLE')
+        message('reading BAM file %s' % (input_bam))
+        input_bams.append(input_bam)
+input_bams.sort()
+message('%d input BAM file(s) found' % len(input_bams))
+
+# Define and create a temporary directory:
+tmp_dir = '{TEMP_DIR}/{PROJECT}-featurecounts.tempdir'
+message('using temporary directory %s' % tmp_dir)
+command('mkdir -p %s' % tmp_dir, name='make_temp')
+
+# Check the required annotation file & executables are OK:
+require('{REF_GTF}', 'PATH_READABLE')
+require('{FEATURECOUNTS_EXEC}', 'PATH_EXECUTABLE')
+
+# Submit the feature count command:
+command('{FEATURECOUNTS_EXEC} --verbose -T $LSB_DJOB_NUMPROC --tmpDir %s -a {REF_GTF} -o {COUNTS_DIR}/{PROJECT_ID}.counts %s &> {LOG_DIR}/featurecounts.log' % (tmp_dir, ' '.join(input_bams)), name='feature_counts')
+
+# Delete the temporary directory:
+command('rm -fr %s' % tmp_dir, name='rm_temp')
+
+# Run the conversion script to generate R-formatted feature data:
+command('module load {MODULE_R}', name='modload_r')
+command('Rscript {FEATURECOUNTS_LOAD_R} \'.*\\.(PR\\d+.)\\.bam\' {COUNTS_DIR}/{PROJECT_ID}.counts {COUNTS_DIR}/{PROJECT_ID}-counts.data', name='load_data_r')

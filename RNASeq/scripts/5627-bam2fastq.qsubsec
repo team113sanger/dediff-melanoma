@@ -1,0 +1,24 @@
+section('{PROJECT}-bam2fastq-{SAMPLE}', description='Convert sample BAM to paired FASTQ for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE}')
+options('-R "select[mem>{MAX_MEM}] rusage[mem={MAX_MEM}]" -M {MAX_MEM}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Determine the CPU requirements, and what was actually allocated.
+min_cpu = int('{CPU_MIN}')
+max_cpu = int('{CPU_MAX}')
+options('-R "span[hosts=1]" -n%d,%d' % (min_cpu, max_cpu))
+message('requested CPU range [%d,%d])' % (min_cpu, max_cpu))
+command('echo "allocated $LSB_DJOB_NUMPROC processors"', name='report_sf_proc')
+
+# Check the input BAM file is OK:
+require('{BAM_DIR}/{SAMPLE}.bam', 'PATH_READABLE')
+
+# Sort the input BAM:
+command('{SAMTOOLS_EXEC} sort -n -@$LSB_DJOB_NUMPROC -T{TEMP_DIR} -l0 -Obam -o{TEMP_DIR}/{SAMPLE}-sorted.bam {BAM_DIR}/{SAMPLE}.bam &> {LOG_DIR}/bam2fastq-sort-{SAMPLE}.log', name='sort_bam')
+
+# Submit the FASTQ generation command:
+# NB: Filter using 0xb00 (SECONDARY,QCFAIL,SUPPLEMENTARY)
+command('{SAMTOOLS_EXEC} fastq --threads $LSB_DJOB_NUMPROC -in -F 0xb00 -1 {FASTQ_DIR}/{SAMPLE}_1.fastq.gz -2 {FASTQ_DIR}/{SAMPLE}_2.fastq.gz {TEMP_DIR}/{SAMPLE}-sorted.bam', name='create_fastq')
+
+# Remove the temporary files:
+command('rm {TEMP_DIR}/{SAMPLE}-sorted.bam', name='rm_temp')

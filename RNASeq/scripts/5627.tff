@@ -1,0 +1,61 @@
+# This is the TFF file for the Dedifferentiated Melanoma RNAseq project.
+# Alastair Droop, 2019-07-10
+
+# Project ID:
+PROJECT_ID = "5627"
+PROJECT_SLUG = "dediff-rnaseq"
+PROJECT = "{PROJECT_ID}_{PROJECT_SLUG}"
+
+# Default farm resources:
+MAX_MEM = 8192 # Maximum memory in Mb
+CPU_MIN = 1
+CPU_MAX = 25
+QUEUE = "normal"
+
+# Project base location
+# NB: You should change this location to point to the project folder on disk:
+BASE_DIR = "/lustre/scratch119/casm/team113da/projects/{PROJECT}"
+
+# Project directory locations relative to the BASE_DIR above:
+LOG_DIR = "{BASE_DIR}/logs"
+METADATA_DIR = "{BASE_DIR}/metadata"
+REF_DIR = "{BASE_DIR}/reference"
+BAM_DIR = "{BASE_DIR}/bam"
+FASTQ_DIR = "{BASE_DIR}/fastq"
+COUNTS_DIR = "{BASE_DIR}/counts"
+SCRIPT_DIR = "{BASE_DIR}/scripts"
+FUSION_REF_DIR = "{REF_DIR}/star-fusion"
+FUSION_DIR = "{BASE_DIR}/fusions"
+PROFILE_DIR = "{BASE_DIR}/gene-profiles"
+TEMP_DIR = "/tmp"
+
+# Metadata files:
+SAMPLE_FILE = "{METADATA_DIR}/5627-sample-map.json"
+REF_GTF = "{REF_DIR}/1000Genomes_hs37d5_75.gtf"
+REF_FASTA_FILENAME = "1000Genomes_hs37d5.fasta"
+REF_FASTA = "{REF_DIR}/{REF_FASTA_FILENAME}"
+
+# Canapps file locations:
+CANAPPS_FILE_PREFIX = "/nfs/cancer_ref01/nst_links/live/2118"
+
+# STAR-Fusion Options
+FUSION_LIB_URL = "https://data.broadinstitute.org/Trinity/CTAT_RESOURCE_LIB"
+FUSION_LIB_FILE = "GRCh37_gencode_v19_CTAT_lib_Oct012019.plug-n-play"
+FUSION_SIMG = "{FUSION_REF_DIR}/star-fusion.v1.8.1.simg"
+FUSION_LIB = "{FUSION_REF_DIR}/sflib-GRCh37-19"
+
+# Modules:
+MODULE_R = "ISG/R"
+MODULE_SINGULARITY = "ISG/singularity/3.2.0"
+
+# Executables:
+FEATURECOUNTS_EXEC = "featureCounts"
+SAMTOOLS_EXEC = "samtools"
+TABIX_EXEC = "tabix"
+ZCAT_EXEC = "zcat"
+BGZIP_EXEC = "bgzip"
+SINGULARITY_EXEC = "singularity"
+
+# R script executables:
+FEATURECOUNTS_LOAD_R = "{SCRIPT_DIR}/5627-load-featurecounts"
+PROFILE_R = "{SCRIPT_DIR}/5627-expression-profile"

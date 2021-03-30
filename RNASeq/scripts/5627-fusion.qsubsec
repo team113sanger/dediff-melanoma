@@ -1,0 +1,44 @@
+section('{PROJECT}-fusion-{SAMPLE}', description='Run STAR-Fusion for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE}')
+options('-R "select[mem>{MAX_MEM}] rusage[mem={MAX_MEM}]" -M {MAX_MEM}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Determine the CPU requirements, and what was actually allocated.
+min_cpu = int('{CPU_MIN}')
+max_cpu = int('{CPU_MAX}')
+options('-R "span[hosts=1]" -n%d,%d' % (min_cpu, max_cpu))
+message('requested CPU range [%d,%d])' % (min_cpu, max_cpu))
+command('echo "allocated $LSB_DJOB_NUMPROC processors"', name='report_sf_proc')
+
+# Make sure that the input data exist:
+for pair in ['1', '2']: require('{FASTQ_DIR}/{SAMPLE}_%s.fastq.gz' % pair, 'PATH_READABLE')
+require('{FUSION_SIMG}', 'PATH_READABLE')
+
+# Create the output folder:
+command('mkdir -p {FUSION_DIR}/{SAMPLE}', name='mkdir_fusion')
+
+# Load the singularity module:
+command('module load {MODULE_SINGULARITY}', name='modload_singularity')
+
+# Build the singularity command:
+s_cmd = ['{SINGULARITY_EXEC} exec']
+s_cmd.append('-e') # Clean environment before running
+s_cmd.append('-B {TEMP_DIR}:/tmp') # Bind temp folder
+s_cmd.append('-B {FASTQ_DIR}:/fastq') # Bind FASTQ folder
+s_cmd.append('-B {FUSION_LIB}:/reference') # Bind reference data folder
+s_cmd.append('-B {FUSION_DIR}/{SAMPLE}:/output') # Bind output folder
+s_cmd.append('{FUSION_SIMG}') # The fusion image
+s_cmd.append('/usr/local/src/STAR-Fusion/STAR-Fusion') # The STAR-Fusion executable (inside the container)
+s_cmd.append('--CPU $LSB_DJOB_NUMPROC') # Set core count
+s_cmd.append('--verbose_level 2') # Set verbose output
+s_cmd.append('--tmpdir /tmp') # Set temp dir
+s_cmd.append('--genome_lib_dir /reference') # The fusion reference library
+s_cmd.append('--left_fq /fastq/{SAMPLE}_1.fastq.gz') # Input FASTQ pair 1
+s_cmd.append('--right_fq /fastq/{SAMPLE}_2.fastq.gz') # Input FASTQ pair 2
+s_cmd.append('--output_dir /output') # Output folder
+s_cmd.append('--FusionInspector validate') # High-quality FusionInspector mode
+s_cmd.append('--examine_coding_effect') # Explore impact of fusions on coding sequences
+s_cmd.append('--denovo_reconstruct') # Attempt to reconstruct fusion transcripts using Trinity de novo assembly
+
+# Submit the fusion script via singularity:
+command(' '.join(s_cmd), name='run_starfusion')

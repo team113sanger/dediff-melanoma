@@ -1,0 +1,30 @@
+#!/usr/bin/env Rscript
+
+# Process the commandline:
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args) != 3){
+    message('usage: 5627-load-featurecounts <sample_re> <input_file> <output_file>')
+    quit(save='no', status=1)
+}
+
+params <- list(
+    'colname.re' = args[1],
+    'input.file' = args[2],
+    'output.file' = args[3]
+)
+
+# Load the input counts file:
+d <- read.table(params$input.file, header=TRUE, sep='\t', comment.char='#', quote='')
+
+# Sort the relevant columns and trim:
+sample.cols <- grep(params$colname.re, colnames(d), perl=TRUE)
+colnames(d) <- gsub(params$colname.re, '\\1', colnames(d), perl=TRUE)
+rownames(d) <- d$Geneid
+d <- d[,sample.cols]
+samples <- sort(colnames(d))
+d <- d[,samples]
+d <- as.matrix(d)
+
+# Save the output file:
+saveRDS(d, file=params$output.file)
