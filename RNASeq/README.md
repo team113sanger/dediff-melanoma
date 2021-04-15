@@ -1,6 +1,6 @@
-# 5627-dediff-rnaseq
+# 5627 Dedifferentiated Melanoma RNASeq
 
-Analysis scripts for the Dedifferentiated Melanoma RNAseq project
+Analysis scripts for the Dedifferentiated Melanoma RNAseq project (project ID 5627)
 
 Alastair Droop, 2019-07-09
 
@@ -9,7 +9,7 @@ Alastair Droop, 2019-07-09
 The input dataset consists of samples from 7 patients:
 
 | patient ID   | Normal                  | Tumour     | Dedifferentiated Tumour |
-|:-------------|:------------------------|:-----------|:------------------------|
+|:------------:|:-----------------------:|:----------:|:-----------------------:|
 | `PD42795`    | `PD42795b`              | `PD42795a` | `PD42795c`              |
 | `PD42796`    | `PD42796b`              | `PD42796a` | `PD42796c`              |
 | `PD42797`    | `PD42797b`              | `PD42797a` | `PD42797c`              |
@@ -19,6 +19,7 @@ The input dataset consists of samples from 7 patients:
 | `PD45781`    | `PD45781b` & `PD45781d` | `PD45781c` | `PD45781a`              |
 
 **NB**:
+
 * Patient `PD42798` has no dediff sample (as it failed QC)
 * Patient `PD42799` has no tumour sample (no sample from patient)
 * Patient `PD42800` has 2 normal samples
@@ -28,43 +29,47 @@ The `$BASE/metadata/sample-map.json` file contains these data:
 
 ~~~json
 {
-	"PR42795": {
-		"normal": ["PR42795b"],
-		"tumour": ["PR42795a"],
-		"dediff": ["PR42795c"]
-	},
-	"PR42796": {
-		"normal": ["PR42796b"],
-		"tumour": ["PR42796a"],
-		"dediff": ["PR42796c"]
-	},
-	"PR42797": {
-		"normal": ["PR42797b"],
-		"tumour": ["PR42797a"],
-		"dediff": ["PR42797c"]
-	},
-	"PR42798": {
-		"normal": ["PR42798b"],
-		"tumour": ["PR42798a"],
-		"dediff": []
-	},
-	"PR42799": {
-		"normal": ["PR42799b"],
-		"tumour": [],
-		"dediff": ["PR42799a"]
-	},
-	"PR42800": {
-		"normal": ["PR42800b", "PR42800c"],
-		"tumour": ["PR42800a"],
-		"dediff": ["PR42800d"]
-	},
-	"PR45781": {
-		"normal": ["PR45781b", "PR45781d"],
-		"tumour": ["PR45781c"],
-		"dediff": ["PR45781a"]
-	}
+  "PR42795": {
+  "normal": ["PR42795b"],
+    "tumour": ["PR42795a"],
+    "dediff": ["PR42795c"]
+  },
+  "PR42796": {
+    "normal": ["PR42796b"],
+    "tumour": ["PR42796a"],
+    "dediff": ["PR42796c"]
+  },
+  "PR42797": {
+    "normal": ["PR42797b"],
+    "tumour": ["PR42797a"],
+    "dediff": ["PR42797c"]
+  },
+  "PR42798": {
+    "normal": ["PR42798b"],
+    "tumour": ["PR42798a"],
+    "dediff": []
+  },
+  "PR42799": {
+    "normal": ["PR42799b"],
+    "tumour": [],
+    "dediff": ["PR42799a"]
+  },
+  "PR42800": {
+    "normal": ["PR42800b", "PR42800c"],
+    "tumour": ["PR42800a"],
+    "dediff": ["PR42800d"]
+  },
+  "PR45781": {
+    "normal": ["PR45781b", "PR45781d"],
+    "tumour": ["PR45781c"],
+    "dediff": ["PR45781a"]
+  }
 }
 ~~~
+
+## Sample Alignment
+
+All samples were sequenced and aligned using the Sanger in-house sequencing pipeline. Details of this can be found [`here`]().
 
 ### Sample List
 
@@ -80,8 +85,7 @@ Several analyses are performed on the data. For all of the below steps, the envi
 
 ### Pull down BAM files from canapps
 
-It is far more efficient to work with local BAM files, so we download them to the project directory ($BASE/bam).
-
+It is far more efficient to work with local BAM files, so we download them to the project directory (`$BASE/bam`).
 
 ### Generate transcript counts with featureCounts
 

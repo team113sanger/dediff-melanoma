@@ -13,8 +13,11 @@ VEP_MAX_MEM = "4096"
 MUTECT2_TO_MAX_CPU = "4"
 MUTECT2_QUEUE = "long"
 
-# Project directory location:
+# The Project base location:
+# This tocken specified the base location for the project.  This should be modified to match your computation setup
 BASE_DIR = "/lustre/scratch119/casm/team113da/projects/{PROJECT}"
+
+# Project directory location:
 LOG_DIR = "{BASE_DIR}/logs"
 METADATA_DIR = "{BASE_DIR}/metadata"
 SCRIPT_DIR = "{BASE_DIR}/scripts"
@@ -27,6 +30,8 @@ DB_DIR = "{BASE_DIR}/db"
 GENOMEDB_DIR = "{DB_DIR}/genomedb"
 
 # Raw data location:
+# This section specifies the locatiomn of the data iin the archive system used at Sanger.
+# This is only used for the `5625-bamqc.qsubsec` template.
 CANAPPS_ID = "2103"
 CANAPPS_BASE_DIR = "/nfs/cancer_ref01/nst_links/live/{CANAPPS_ID}"
 
@@ -49,6 +54,7 @@ USE_PON = "yes" # Values should be "yes" or "no"
 PON_VCF = "{DB_DIR}/{PROJECT_ID}-pon.vcf.gz"
 
 # Executables:
+# These specify the exact scripts used in the processing steps
 SAMTOOLS_EXEC = "samtools"
 GATK_EXEC = "/nfs/users/nfs_a/ad33/bin/GATK-4.1.1.0/gatk --java-options \'-Xmx{GATK_MAX_MEM}M\'"
 BCF_EXEC = "bcftools"

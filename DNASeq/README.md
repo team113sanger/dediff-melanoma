@@ -45,7 +45,8 @@ qsubsec -ps 5625-collect-artifacts.qsubsec 5625.tff SAMPLE='FILE(../metadata/pat
 ### 5: Run Variant Detection
 
 **Notes**:
-1. Due to some odd bug in Mutect2 for sample `PD42798c`, the single region `20 2673457 2673777` was removed from the original baitset file. The modified baitset file used for the analysis was `$BASE/reference/baitset/sureselect_5_9-padded-trimmed.bed`.
+
+1. Due to an odd bug in Mutect2 for sample `PD42798c`, the single region `20 2673457 2673777` was removed from the original baitset file. The modified baitset file used for the analysis was `$BASE/reference/baitset/sureselect_5_9-padded-trimmed.bed`.
 2. As patient `PD42799` does not have a tumour sample, it can not be run in the same submission command (hence the two commands below)
 
 ~~~bash
