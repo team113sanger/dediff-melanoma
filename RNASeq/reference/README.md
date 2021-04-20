@@ -2,10 +2,6 @@
 
 This folder contains the reference data necessary for the RNASeq analysis.
 
-## 1000genomes Reference
-
-We need to contact canapps to get details of exactly how their reference was generated.
-
 ## STAR-Fusion Reference
 
 The `star-fusion` directory contains the singularity image and reference data for running [STAR-Fusion](https://github.com/STAR-Fusion/STAR-Fusion/wiki) on Ingrid's RNAseq data.
