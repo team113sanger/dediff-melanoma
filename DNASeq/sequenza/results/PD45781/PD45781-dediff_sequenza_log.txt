@@ -1,2 +1,0 @@
-Sat Jan 25 00:02:07 2020
-Sequenza version: 3.0.0
