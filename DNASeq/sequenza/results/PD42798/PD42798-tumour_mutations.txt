@@ -1,0 +1,2 @@
+chromosome	position	GC.percent	good.reads	adjusted.ratio	F	mutation	CNn	CNt	Mt	LPP
+6	170871058	66	52	1.06541560201411	0.115	G>A	2	3	3	-10.2970424404371
