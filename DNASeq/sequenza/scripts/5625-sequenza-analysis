@@ -1,0 +1,44 @@
+#!/usr/bin/env Rscript
+
+# Process the commandline:
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args) != 5){
+    message('usage: 5627-expression-profile <cores> <data> <gender> <sample_id> <output_dir>')
+    quit(save='no', status=1)
+}
+
+params <- list(
+    'cores' = as.integer(args[1]),
+    'input.data' = args[2],
+    'gender' = args[3],
+    'sample.id' = args[4],
+    'output.dir' = args[5],
+    'chrs' = c(1:22)
+)
+if(is.na(params$cores)) params$cores <- 1
+if(params$gender %in% c('male', 'female') == FALSE){
+    message('gender must be "male" or "female"')
+    quit(save='no', status=1)
+}
+if(params$gender == 'female'){
+    female <- TRUE
+} else {
+    female <- FALSE
+}
+
+# Load the necessary libraries:
+library(sequenza)
+
+# Load the input dataset:
+message(sprintf('reading input data from "%s"...', params$input.data))
+# gc.stats <- gc.sample.stats(params$input.data, verbose=TRUE, parallel=params$cores) # WORKS OK
+d <- sequenza.extract(params$input.data, verbose=TRUE, parallel=params$cores, chromosome.list=params$chrs)
+
+# Analyse the data:
+message('fitting data...')
+d.fit <- sequenza.fit(d, female=female, mc.cores=params$cores)
+
+# Write the output data:
+message(sprintf('writing analysis data to "%s"...', params$output.dir))
+sequenza.results(sequenza.extract=d, cp.table=d.fit, female=female, sample.id=params$sample.id, out.dir=params$output.dir)

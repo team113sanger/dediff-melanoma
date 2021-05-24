@@ -1,0 +1,10 @@
+section('{PROJECT}-sequenza-gcprep', description='Prepare sequenze GC wiggle file for {PROJECT_ID} ({PROJECT_SLUG})')
+options('-R "select[mem>{SQ_MAX_MEM}] rusage[mem={SQ_MAX_MEM}]" -M {SQ_MAX_MEM}')
+options('-q "{SQ_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Check for inputs:
+require('{CANAPPS_REF_FASTA}', 'PATH_READABLE')
+
+# Build the GC Wiggle track:
+command('{SEQUENZA_EXEC} gc_wiggle -f {CANAPPS_REF_FASTA} -w {SEQUENZA_WINDOW} -o {SEQUENZA_REF_GC_FILE}', name='gc_prep')

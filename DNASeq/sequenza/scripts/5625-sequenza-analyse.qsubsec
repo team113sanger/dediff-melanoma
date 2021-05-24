@@ -1,0 +1,20 @@
+section('{PROJECT}-sequenza-analyse-{SAMPLE}-{STYPE}', description='Run sequenza analysis for {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE} ({STYPE})')
+options('-R "select[mem>{SQ_MAX_MEM}] rusage[mem={SQ_MAX_MEM}]" -M {SQ_MAX_MEM}')
+options('-q "{SQ_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Request CPU range.
+options('-R "span[hosts=1]" -n{SQ_MIN_CPU},{SQ_MAX_CPU}')
+message('requested CPU range [{SQ_MIN_CPU},{SQ_MAX_CPU}])')
+command('echo "allocated $LSB_DJOB_NUMPROC processors"', name='report_sf_proc', test=False, log=False)
+
+# Check the inputs:
+require('{SEQUENZA_SEQZ_DIR}/{SAMPLE}-{STYPE}.seqz.gz', 'PATH_READABLE')
+require('{SEQUENZA_SEQZ_DIR}/{SAMPLE}-{STYPE}.seqz.gz.tbi', 'PATH_READABLE')
+
+# Create the output folder:
+command('mkdir -p {SEQUENZA_RES_DIR}/{SAMPLE}', name='make_resdir')
+
+# Run the sequenza analysis R code:
+command('module load {MODULE_R}', name='modload_r')
+command('Rscript {SEQUENZA_ANALYSIS_R} $LSB_DJOB_NUMPROC {SEQUENZA_SEQZ_DIR}/{SAMPLE}-{STYPE}.seqz.gz {GENDER} "{SAMPLE}-{STYPE}" {SEQUENZA_RES_DIR}/{SAMPLE}', name='sequenza_analyse')

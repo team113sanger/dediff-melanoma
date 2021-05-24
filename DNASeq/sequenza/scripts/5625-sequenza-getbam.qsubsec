@@ -1,0 +1,7 @@
+section('{PROJECT}-sequenza-getbam-{SAMPLE}', description='Pull and index sample {SAMPLE} BAM file for {PROJECT_ID} ({PROJECT_SLUG})')
+options('-R "select[mem>{SQ_MAX_MEM}] rusage[mem={SQ_MAX_MEM}]" -M {SQ_MAX_MEM}')
+options('-q "{SQ_QUEUE}"')
+outputs('{LOG_DIR}')
+require('{CANAPPS_BASE_DIR}/{SAMPLE}/{SAMPLE}.sample.dupmarked.bam', 'PATH_READABLE')
+command('cp {CANAPPS_BASE_DIR}/{SAMPLE}/{SAMPLE}.sample.dupmarked.bam {SEQUENZA_BAM_DIR}/{SAMPLE}.bam', name='copy_{SAMPLE}')
+command('{SAMTOOLS_EXEC} index {SEQUENZA_BAM_DIR}/{SAMPLE}.bam', name='index_{SAMPLE}')

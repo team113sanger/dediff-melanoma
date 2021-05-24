@@ -1,0 +1,8 @@
+section('{PROJECT}-sequenza-pileup-{SAMPLE}', description='Generate {SAMPLE} pileup file for {PROJECT_ID} ({PROJECT_SLUG})')
+options('-R "select[mem>{SQ_MAX_MEM}] rusage[mem={SQ_MAX_MEM}]" -M {SQ_MAX_MEM}')
+options('-q "{SQ_QUEUE}"')
+outputs('{LOG_DIR}')
+
+require('{SEQUENZA_BAM_DIR}/{SAMPLE}.bam', 'PATH_READABLE')
+
+command('{SAMTOOLS_EXEC} mpileup --ff UNMAP,SECONDARY,QCFAIL,DUP,SUPPLEMENTARY --max-depth {SEQUENZA_PILEUP_MAX_DEPTH} --positions {BAITSET_BED} --fasta-ref {CANAPPS_REF_FASTA} --min-MQ {SEQUENZA_PILEUP_MIN_MQ} --min-BQ {SEQUENZA_PILEUP_MIN_BQ} {SEQUENZA_BAM_DIR}/{SAMPLE}.bam | {GZIP_EXEC} > {SEQUENZA_PILEUP_DIR}/{SAMPLE}.pileup.gz', name='run_pileup')

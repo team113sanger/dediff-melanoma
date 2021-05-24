@@ -1,0 +1,20 @@
+section('{PROJECT}-sequenza-prep-{SAMPLE}-{STYPE}', description='Prepare sequenze files for {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE} ({STYPE})')
+options('-R "select[mem>{SQ_MAX_MEM}] rusage[mem={SQ_MAX_MEM}]" -M {SQ_MAX_MEM}')
+options('-q "{SQ_QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Check the inputs:
+require('{SEQUENZA_PILEUP_DIR}/{NORMAL}.pileup.gz', 'PATH_READABLE')
+require('{SEQUENZA_PILEUP_DIR}/{TUMOUR}.pileup.gz', 'PATH_READABLE')
+require('{CANAPPS_REF_FASTA}', 'PATH_READABLE')
+require('{SEQUENZA_REF_GC_FILE}', 'PATH_READABLE')
+
+message('using normal pileup: {SEQUENZA_PILEUP_DIR}/{NORMAL}.pileup.gz')
+message('using {STYPE} pileup: {SEQUENZA_PILEUP_DIR}/{TUMOUR}.pileup.gz')
+
+# Nake a list of the input chromsomes:
+chrs = '{SEQUENZA_CHRS}'.split(',')
+
+# Submit the sequenza chromosome jobs:
+# command('{SEQUENZA_EXEC} bam2seqz -C %s --pileup --fasta {CANAPPS_REF_FASTA} -gc {SEQUENZA_REF_GC_FILE} -n {SEQUENZA_PILEUP_DIR}/{NORMAL}.pileup.gz -t {SEQUENZA_PILEUP_DIR}/{TUMOUR}.pileup.gz -o {SEQUENZA_SEQZ_DIR}/{SAMPLE}-{STYPE}.seqz.gz' % (' '.join(chrs)), name='prep')
+command('{SEQUENZA_EXEC} bam2seqz --pileup --fasta {CANAPPS_REF_FASTA} -gc {SEQUENZA_REF_GC_FILE} -n {SEQUENZA_PILEUP_DIR}/{NORMAL}.pileup.gz -t {SEQUENZA_PILEUP_DIR}/{TUMOUR}.pileup.gz -o {SEQUENZA_SEQZ_DIR}/{SAMPLE}-{STYPE}.seqz.gz', name='prep')
