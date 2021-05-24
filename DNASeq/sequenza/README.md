@@ -42,8 +42,6 @@ qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff 
 qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42799 STYPE=dediff NORMAL=PD42799b TUMOUR=PD42799a
 qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42800 STYPE=tumour NORMAL=PD42800b TUMOUR=PD42800a
 qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42800 STYPE=dediff NORMAL=PD42800c TUMOUR=PD42800d
-qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45781 STYPE=tumour NORMAL=PD45781d TUMOUR=PD45781c
-qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45781 STYPE=dediff NORMAL=PD45781b TUMOUR=PD45781a
 qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45890 STYPE=tumour NORMAL=PD45890b TUMOUR=PD45890a
 qsubsec -ps 5625-sequenza-prep.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45890 STYPE=dediff NORMAL=PD45890b TUMOUR=PD45890c
 ~~~
@@ -63,8 +61,6 @@ qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.t
 qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42799 STYPE=dediff NORMAL=PD42799b TUMOUR=PD42799a GENDER=female SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
 qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42800 STYPE=tumour NORMAL=PD42800b TUMOUR=PD42800a GENDER=female SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
 qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD42800 STYPE=dediff NORMAL=PD42800c TUMOUR=PD42800d GENDER=female SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
-qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45781 STYPE=tumour NORMAL=PD45781d TUMOUR=PD45781c GENDER=male SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
-qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45781 STYPE=dediff NORMAL=PD45781b TUMOUR=PD45781a GENDER=male SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
 qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45890 STYPE=tumour NORMAL=PD45890b TUMOUR=PD45890a GENDER=male SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
 qsubsec -ps 5625-sequenza-analyse.qsubsec ../../scripts/5625.tff 5625-sequenza.tff SAMPLE=PD45890 STYPE=dediff NORMAL=PD45890b TUMOUR=PD45890c GENDER=male SQ_CPU_MIN=20 SQ_CPU_MAX=25 MAX_MEM=SQ_32768
 ~~~
