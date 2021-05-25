@@ -1,0 +1,78 @@
+{
+	"PD42795": {
+		"tumour": {
+			"malignant": ["PD42795a"],
+			"normal": ["PD42795b"]
+		},
+		"dediff": {
+			"malignant": ["PD42795c"],
+			"normal": ["PD42795b"]
+		}
+	},
+	"PD42796": {
+		"tumour": {
+			"malignant" :["PD42796a"],
+			"normal" : ["PD42796b"]
+		},
+		"dediff": {
+			"malignant" :["PD42796c"],
+			"normal" : ["PD42796b"]			
+		}
+	},
+	"PD42797": {
+		"tumour": {
+			"malignant" :["PD42797a"],
+			"normal" : ["PD42797b"]
+		},
+		"dediff": {
+			"malignant" :["PD42797c"],
+			"normal" : ["PD42797b"]			
+		}
+	},
+	"PD42798": {
+		"tumour": {
+			"malignant" :["PD42798a"],
+			"normal" : ["PD42798b"]
+		},
+		"dediff": {
+			"malignant" :["PD42798c"],
+			"normal" : ["PD42798b"]			
+		}
+	},
+	"PD42799": {
+		"dediff": {
+			"malignant" :["PD42799a"],
+			"normal" : ["PD42799b"]			
+		}
+	},
+	"PD42800": {
+		"tumour": {
+			"malignant" :["PD42800a"],
+			"normal" : ["PD42800b", "PD42800c"]
+		},
+		"dediff": {
+			"malignant" :["PD42800d"],
+			"normal" : ["PD42800b", "PD42800c"]			
+		}
+	},
+	"PD45781": {
+		"tumour": {
+			"malignant" :["PD45781c"],
+			"normal" : ["PD45781d"]
+		},
+		"dediff": {
+			"malignant" :["PD45781a"],
+			"normal" : ["PD45781b"]			
+		}
+	},
+	"PD45890":{
+		"tumour": {
+			"malignant" :["PD45890a"],
+			"normal" : ["PD45890b"]
+		},
+		"dediff": {
+			"malignant" :["PD45890c"],
+			"normal" : ["PD45890b"]			
+		}
+	}
+}
