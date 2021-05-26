@@ -11,6 +11,8 @@ This folder contains the scripts to process the dedifferentiated melanoma SNV an
 * The bash variable `$BASE` should point to the DNASeq directory.
 * These scripts use the [`qsubsec`](https://github.com/alastair-droop/qsubsec) template system. Make sure that the values specified in the token file `dediff-melanoma.tff` match your computational setup.
 
+### GATK Processing
+
 ~~~bash
 cd $BASE/scripts
 qsubsec -ps dediff-mutect2.qsubsec dediff-melanoma.tff MEM_MAX=32768 CPU_MAX=20 SAMPLE=$SAMPLE DTYPE=$DTYPE
@@ -20,3 +22,7 @@ qsubsec -ps dediff-calculate-contamination.qsubsec dediff-melanoma.tff SAMPLE=$S
 qsubsec -ps dediff-filter-mutect2.qsubsec dediff-melanoma.tff SAMPLE=$SAMPLE DTYPE=$DTYPE
 qsubsec -ps dediff-annotate-mutect2.qsubsec dediff-melanoma.tff SAMPLE=$SAMPLE DTYPE=$DTYPE
 ~~~
+
+### Downstream Variant Filtering
+
+Once the annotated VCF files are produced by GATK, further filtering steps are performed by `vcf-filtering.R` to select high-quality variants for further analysis.  This script uses the [`VariantAnnotation` Bioconductor package](http://bioconductor.org/packages/VariantAnnotation/).
