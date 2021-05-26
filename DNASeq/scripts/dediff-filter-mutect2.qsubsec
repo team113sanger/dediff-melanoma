@@ -1,0 +1,48 @@
+section('{PROJECT_ID}-FILTERMUTECT2-{SAMPLE}-{DTYPE}', description='Run GATK FilterMutect2 for sample {SAMPLE} normal-vs-{DTYPE} for project {PROJECT_ID}')
+options('-R "select[mem>{MEM_MAX}] rusage[mem={MEM_MAX}]" -M {MEM_MAX}')
+options('-R "span[hosts=1]" -n{CPU_MAX}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Pull out the sample type:
+disease_type = '{DTYPE}'.lower()
+if disease_type not in ['tumour', 'dediff']: raise Exception('invalid disease type %s' % disease_type)
+
+# Define the disease type string for use in filenames:
+if disease_type == 'tumour': disease_str = 'NT'
+else: disease_str = 'ND'
+
+import json
+sample_types = ['normal', 'malignant']
+all_samples = set()
+with open('{SAMPLE_MAP}', 'r') as map_file:
+    sample_map = json.loads(map_file.read())
+    if '{SAMPLE}' not in sample_map.keys(): raise Exception('sample {SAMPLE} not in sample map')
+    if disease_type not in sample_map['{SAMPLE}'].keys(): raise Exception('sample type %s not in sample map data for sample {SAMPLE}' % disease_type)
+    samples = sample_map['{SAMPLE}'][disease_type]
+    for i in sample_types:
+        if i not in samples.keys(): raise Exception('%s sample data missing for %s sample {SAMPLE}' % (i, disease_type))
+        message('using %d %s sample(s): %s' % (len(samples[i]), i, ', '.join(samples[i])))
+        for s in samples[i]:
+            all_samples.add(s)
+
+# Make sure there is only one malignant sample:
+if len(samples['malignant']) > 1: raise Exception('Multiple malignant samples detected')
+
+# Check that required files are present:
+require('{CANAPPS_REF}', 'PATH_READABLE')
+
+# Build the GATK commandline
+cmd = ['gatk FilterMutectCalls']
+cmd.append('-R {CANAPPS_REF}') # The input reference
+cmd.append('-V {SAMPLE_DIR}/{SAMPLE}/{SAMPLE}%s-mutect.vcf.gz' % (disease_str)) # The input VCF file from Mutect2
+cmd.append('-O {SAMPLE_DIR}/{SAMPLE}/{SAMPLE}%s-filtered.vcf.gz' % (disease_str)) # The output filtered VCF file
+cmd.append('--contamination-table {SAMPLE_DIR}/{SAMPLE}/{SAMPLE}%s-contamination-%s.data' % (disease_str, samples['normal'][0])) # The contamination table(s) (pick one, as otherwise GATK crashes)
+cmd.append('--tumor-segmentation {SAMPLE_DIR}/{SAMPLE}/{SAMPLE}%s-segmentation-%s.data' % (disease_str, samples['normal'][0])) # The segmentation table (pick one, as they're all the same)
+cmd.append('--ob-priors {SAMPLE_DIR}/{SAMPLE}/{SAMPLE}%s-orientation-model.tar.gz' % (disease_str)) # The orientation model
+cmd.append('&> {SAMPLE_DIR}/{SAMPLE}/logs/{SAMPLE}%s-filtermutect.log' % (disease_str)) # Redirect to logfile
+cmd = ' '.join(cmd)
+
+# Run Mutect2 via singularity:
+command('module load {SINGULARITY_MODULE}', name='modload_singularity')
+command('singularity exec {GATK_IMAGE} %s' % (cmd), name='run_filtermutect')

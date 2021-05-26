@@ -16,6 +16,28 @@ Many of the scripts in this project use the [`qsubsec`](https://github.com/alast
 
 Most of the qsubsec scripts require a token file (`.tff`) to specify the variable used for in the script. Many of the parameters in these TFF files will need to be modified for your specific computation environment. Please see the documentation within the TFF files for guidance.
 
+## GATK Image
+
+The GATK processing scripts are performed using the GATK Docker image running via singularity 3.2.0.
+
+The GATK image was obtained as:
+
+~~~bash
+singularity pull docker://broadinstitute/gatk:latest
+singularity run gatk_latest.sif gatk --version
+~~~
+
+The version data ias as follows:
+
+~~~plain
+Using GATK jar /gatk/gatk-package-4.1.6.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /gatk/gatk-package-4.1.6.0-local.jar --version
+The Genome Analysis Toolkit (GATK) v4.1.6.0
+HTSJDK Version: 2.21.2
+Picard Version: 2.21.9
+~~~
+
 ## Input Data
 
 Raw sequence data are available from the [ENA](https://www.ebi.ac.uk/ena/browser/home):

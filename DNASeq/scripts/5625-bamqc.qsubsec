@@ -1,7 +1,0 @@
-# This script runs initial BAM QC for all samples.
-section('{PROJECT_ID}-BAMQC-{SAMPLE}', description='Run initial BAM QC for project {PROJECT_ID} ({PROJECT_SLUG}) sample {SAMPLE}')
-options('-R "select[mem>{MUTECT2_TO_MAX_MEM}] rusage[mem={MUTECT2_TO_MAX_MEM}]" -M {MUTECT2_TO_MAX_MEM}')
-options('-q "normal"')
-outputs('{LOG_DIR}')
-command('{SAMTOOLS_EXEC} idxstats {CANAPPS_BASE_DIR}/{SAMPLE}/{SAMPLE}.sample.dupmarked.bam > {STATS_DIR}/{SAMPLE}.idxstats', 'sample_idxstats')
-command('{SAMTOOLS_EXEC} flagstat {CANAPPS_BASE_DIR}/{SAMPLE}/{SAMPLE}.sample.dupmarked.bam > {STATS_DIR}/{SAMPLE}.flagstats', 'sample_flagstats')

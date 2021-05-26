@@ -1,0 +1,49 @@
+# This script contains the template values for Dedifferentiated Melanoma DNA analysis project.
+# Alastair Droop, 2020-04-23
+
+# Project Location & ID
+PROJECT_ID = "dediff-melanoma"
+
+# The compute Farm Default CPU and memory limits:
+CPU_MAX = 1
+MEM_MAX = 8192
+
+# The queue to use when submitting the scripts via LSF:
+QUEUE = "normal"
+
+# The base location for the project:
+# NB: You must update this to fit your local compute environment
+BASE_DIR = "/nfs/users/nfs_a/ad33/lustre-projects/OE20200423-dediff-snv"
+
+# Project Directory locations:
+LOG_DIR = "{BASE_DIR}/logs"
+METADATA_DIR = "{BASE_DIR}/metadata"
+SAMPLE_DIR = "{BASE_DIR}/samples"
+INPUT_DIR = "{BASE_DIR}/input"
+
+# Base directory of the original data:
+# NB: You must update this to fit your local compute environment
+LINK_DIR = "/nfs/users/nfs_a/ad33/lustre-projects/5625_dedifferentiated-melanoma"
+
+# canapps Raw data location:
+# NB: You must update this to fit your local compute environment
+CANAPPS_BASE_DIR = "/nfs/cancer_ref01/nst_links/live/2103"
+
+# Original reference data:
+# NB: You must update these to fit your local compute environment
+CANAPPS_REF = "{LINK_DIR}/reference/genome.fa"
+CANAPPS_BAITSET = "{LINK_DIR}/reference/baitset/sureselect_5_9-padded-trimmed.bed"
+GERMLINE_VCF = "{LINK_DIR}/reference/gnomad-exomes_2.1.1.vcf.gz"
+CONTAMINATION_VCF = "{BASE_DIR}/reference/somatic-b37-small_exac_common_3.vcf"
+PON_VCF = "{LINK_DIR}/db/5625-pon.vcf.gz"
+DBSNP_VCF = "{LINK_DIR}/reference/dbsnp_138.b37.vcf.gz"
+CLINVAR_VCF = "{LINK_DIR}/reference/clinvar.vcf.gz"
+
+# Sample Map:
+SAMPLE_MAP = "{METADATA_DIR}/{PROJECT_ID}-sample-map.json"
+
+# Singularity module options:
+SINGULARITY_MODULE = "ISG/singularity/3.2.0"
+
+# GATK Singularity image location:
+GATK_IMAGE = "{BASE_DIR}/GATK/GATK_4.1.6.0.sif"

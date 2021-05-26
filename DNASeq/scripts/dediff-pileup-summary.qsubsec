@@ -1,0 +1,45 @@
+section('{PROJECT_ID}-PILEUPSUMMARY-{SAMPLE}', description='Run GATK GetPileupSummaries for sample {SAMPLE} for project {PROJECT_ID}')
+options('-R "select[mem>{MEM_MAX}] rusage[mem={MEM_MAX}]" -M {MEM_MAX}')
+options('-R "span[hosts=1]" -n{CPU_MAX}')
+options('-q "{QUEUE}"')
+outputs('{LOG_DIR}')
+
+# Import the JSON sample map and find all the sample IDs:
+import json
+all_samples = set()
+with open('{SAMPLE_MAP}', 'r') as map_file:
+    sample_map = json.loads(map_file.read())
+    if '{SAMPLE}' not in sample_map.keys(): raise Exception('sample {SAMPLE} not in sample map')
+    sample_map = sample_map['{SAMPLE}']
+    for d in sample_map.keys():
+        for t in sample_map[d]:
+            for f in sample_map[d][t]:
+                all_samples.add(f)
+all_samples = list(all_samples)
+message('%d files detected for sample {SAMPLE}: %s' % (len(all_samples), ', '.join(all_samples)))
+
+# Check input files are OK:
+require('{CONTAMINATION_VCF}', 'PATH_READABLE')
+require('{CANAPPS_BAITSET}', 'PATH_READABLE')
+
+# Load singularity:
+command('module load {SINGULARITY_MODULE}', name='modload_singularity')
+
+# Iterate through each sample file in turn:
+for sample in all_samples:
+    input_bam = '{INPUT_DIR}/%s.bam' % (sample)
+    output_filename = '{SAMPLE_DIR}/{SAMPLE}/%s-pileup-summary.data' % (sample)
+    log_filename = '{SAMPLE_DIR}/{SAMPLE}/logs/%s-pileup-summary.log' % (sample)
+    require(input_bam, 'PATH_READABLE')
+
+    # Build the command line:
+    cmd = ['gatk GetPileupSummaries']
+    cmd.append('-I %s' % input_bam) # The malignant input BAM file
+    cmd.append('-V {CONTAMINATION_VCF}') # The common germline variants to use
+    cmd.append('-L {CONTAMINATION_VCF}') # The common germline variants to use (NB: Same as -V)
+    cmd.append('-O %s' % output_filename) # The output summary file
+    cmd.append('&> %s' % (log_filename)) # Redirect to logfile
+    cmd = ' '.join(cmd)
+
+    # Run Mutect2 via singularity:
+    command('singularity exec {GATK_IMAGE} %s' % (cmd), name='run_pileupsummary_%s' % sample)
