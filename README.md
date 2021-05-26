@@ -44,3 +44,7 @@ Raw sequence data are available from the [ENA](https://www.ebi.ac.uk/ena/browser
 
 * DNA: [EGAS00001003471](https://ega-archive.org/studies/EGAS00001003471)
 * RNA: [EGAS00001003601](https://ega-archive.org/studies/EGAS00001003601)
+
+## Output Data
+
+Processed data generated from these scripts is available on [Figshare](https://doi.org/10.6084/m9.figshare.c.5432205).
