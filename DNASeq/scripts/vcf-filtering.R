@@ -29,7 +29,7 @@ mutType <- function(ref, alt, collapse=TRUE){
 }
 
 #Read in sample id mappings
-sample.map <- fromJSON("../metadata/OE20200423-sample-map.json") 
+sample.map <- fromJSON("../metadata/sample-map.json") 
 sample.map.df <- read.csv("../metadata/sample-map.csv", sep = "")
 
 
@@ -93,8 +93,7 @@ VAF_malignant_filter <- function(vcf){
 }
 
 
-#create empty data frames for recording proportion of C>T mutations; and details of all the variants from the raw, annotated and filtered vcf files 
-CT_variants <- data.frame()
+#create empty data frames for recording all fitlered variants  
 d_all_variants <- data.frame(stringsAsFactors = FALSE)
 
 
@@ -105,8 +104,7 @@ d_all_variants <- data.frame(stringsAsFactors = FALSE)
   io <- list('input_NT.vcf' = paste('../', 'output-vcf/',i, 'NT-annotated.vcf.gz', sep = ""),
   'input_raw_NT.vcf' = paste('../', 'output-vcf/', i, 'NT-mutect.vcf.gz', sep = ""),
   'input_ND.vcf' = paste('../', 'output-vcf/', i, 'ND-annotated.vcf.gz', sep = ""),
-  'input_raw_ND.vcf' = paste('../', 'output-vcf/', i, 'ND-mutect.vcf.gz', sep = ""),
-  'output.plotfile' = paste(i, '-output.png', sep="")
+  'input_raw_ND.vcf' = paste('../', 'output-vcf/', i, 'ND-mutect.vcf.gz', sep = "")
   )
 
   params <- list(
@@ -118,8 +116,8 @@ d_all_variants <- data.frame(stringsAsFactors = FALSE)
   'min.malignantAF' = 0.05, # 5% - this is the base filter
   'min.malignantAF.DPtwenty' = 0.2, #20% - this is for reads whose read depth is <20 
   'min.malignantAF.DPthirty' = 0.1, #10% - this is for reads whose read depth is <30
-  'min.MBQ' = 30, #set minimum median base quality to 30 
-  'mutation.cols' = c('C>A'='#58BDEB', 'C>G'='#050708', 'C>T'='#D43C32', 'T>A'='#CBCACB', 'T>C'='#ABCC72', 'T>G'='#E7C9C6'))
+  'min.MBQ' = 30) #set minimum median base quality to 30 
+ 
 
 #No conventional melanoma from 'PD42799' individual
 if(i != "PD42799"){
@@ -335,92 +333,13 @@ v.data_ND <- v.data_ND[!is.na(v.data_ND$VAF),]
 
 #add data to the df containing all variants 
 d_all_variants <- rbind(d_all_variants, v.data_ND)
-
-#plot graph 
-ifelse(i == "PD42799", v.data <- v.data_ND, v.data <- rbind(v.data_ND, v.data_NT))
-
-filtering_stage <- list(
-  'raw'="No filtering",
-  'annotated'="Mutect2_filtering",
-  'filtered'="Additional_filtering")
-
-if(i == "PD42798"){
-  sample_type <- list(
-  "normal" = "Normal",
-  "tumour" = "De-differentiated melanoma",
-  "dediff" = "De-differentiated melanoma metastasis"
-)
-} else if(i == "PD45781"){
-  sample_type <- list(
-  "normal" = "Normal",
-  "tumour" = "De-differentiated melanoma metastasis",
-  "dediff" = "De-differentiated melanoma"
-)
-} else{
-  sample_type <- list(
-  "normal" = "Normal",
-  "tumour" = "Conventional melanoma",
-  "dediff" = "De-differentiated melanoma"
-)
-}
-
-
-
-
-stage_labeller <- function(variable,value){
-  if (variable=='stage') {
-    return(filtering_stage[value])
-  } else {
-    return(sample_type[value])
-  }
-}
-
-# Plot the v.data for each sample in turn:
-message(sprintf('plotting filtered data to "%s"...', io$output.plotfile))
-png(file=io$output.plotfile, res = 250, width = 2000, height = 2000)
-
-p <- ggplot(v.data, aes(x=depth, y=VAF, colour=mutation)) +
-  geom_point(pch=1, size=1) +
-  scale_x_log10() +
-  scale_y_log10() +
-  scale_colour_manual(values=params$mutation.cols) +
-  facet_grid(type~stage,labeller = stage_labeller) + #grid should be split by type of sample and also stage of filtering 
-  theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.background=element_blank(), panel.border=element_rect(fill=NA)) +
-  labs(x='Approximate Read Depth (log10)', y='VAF') +
-  ggtitle('All SNVs by Sample & Type')
- 
-print(p)
-
-dev.off()
-
-#add to the variant data frame - the number of variants and proportion fo C>T mutations for each sample 
-graph_combos <- unique(paste(v.data$sample_id, v.data$stage))
-
-variant.df <- do.call(rbind, lapply(1:length(graph_combos), function(graph){
-  sample_id <- unlist(strsplit(graph_combos[graph], " "))[1]
-  stage <-  unlist(strsplit(graph_combos[graph], " "))[2]
-  res <- data.frame("sample" = unique(v.data$sample),
-  "sample_id" = sample_id,
-  "stage" = stage,
-  "total variants" = nrow(v.data[v.data$sample_id == sample_id & v.data$stage == stage,]),
-  "C>T" = nrow(v.data[v.data$sample_id == sample_id & v.data$stage == stage & v.data$mutation == "C>T",]))
-  return(res)
-}))
-
-
-
-
-CT_variants <- rbind(CT_variants, variant.df)
-
+return(d_all_variants)
 
 }
 
 #change colnames and write the shared variant table and C>T proportion table to file 
 
 d_all_variants <- d_all_variants[!is.na(d_all_variants$VAF),]
-CT_variants$CT_proportion <- CT_variants$C.T / CT_variants$total.variants
-
-write.table(CT_variants, file = "CT_proportions", sep = " ", row.names = F )
 
 #alter d_all_variants so that the sample annotations are correct
 d_all_variants[d_all_variants$sample_id == "PD42798a", 'type'] <- "dediff"
